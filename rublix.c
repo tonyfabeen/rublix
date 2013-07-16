@@ -8,6 +8,7 @@ static VALUE mRublix;
 static VALUE lxc_config_path(VALUE klass){
   VALUE str_config_path;
   /*
+  //lxc_get_default_config_path()
   struct lxc_container *c;
 
   if ((c = lxc_container_new(CONTAINER_NAME, NULL)) == NULL){
