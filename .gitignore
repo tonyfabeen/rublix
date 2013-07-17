@@ -20,3 +20,4 @@ RUBYARCHDIR.time
 .yardoc
 _yardoc
 doc/
+/mkmf.log
