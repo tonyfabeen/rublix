@@ -14,9 +14,13 @@ class RublixTest < Test::Unit::TestCase
   end
 
   def test_new_container
-    container = Rublix::LXC::Container.new("container_one")
-    puts "CONTAINER is defined ?: #{container.is_defined}"
-    assert_equal container.name, "container_one"
-    puts "CONTAINER created ? #{container.create}"
+    container_name = "container_#{rand(999)}"
+    puts "[Rublix Test] Creating #{container_name }"
+
+    container = Rublix::LXC::Container.new(container_name)
+    assert_equal container.name, container_name
+
+    assert_equal container.create, true
+    assert_equal container.is_defined, true
   end
 end
