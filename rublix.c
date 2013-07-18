@@ -22,8 +22,11 @@ static VALUE container_new(VALUE container_class,
                            VALUE container_name){
   VALUE args[1];
   struct lxc_container *c;
+  //const char *name = RSTRING(container_name);
+  const char *name = "hello";
 
-  c = lxc_container_new((const char *) container_name, NULL);
+  //c = lxc_container_new((const char *) container_name, NULL);
+  c = lxc_container_new(name, NULL);
   if (!c) {
     fprintf(stderr, "Error on create container)");
   }
@@ -89,6 +92,22 @@ static VALUE container_create(VALUE self){
 }
 
 
+static VALUE container_start(VALUE self){
+  struct lxc_container *c;
+  Data_Get_Struct(self, struct lxc_container, c);
+
+  c->load_config(c, NULL);
+  c->want_daemonize(c);
+
+  if(c->startl(c,0,NULL)){
+    return Qtrue;
+    fprintf(stderr,"[Rublix] Error on trying to Start Container");
+  }else{
+    return Qfalse;
+  }
+}
+
+
 void Init_rublix(){
 
   mRublix = rb_define_module("Rublix");
@@ -102,6 +121,6 @@ void Init_rublix(){
   rb_define_method(cContainer, "name", container_get_name,0);
   rb_define_method(cContainer, "is_defined", container_is_defined, 0);
   rb_define_method(cContainer, "create", container_create,0);
-
+  rb_define_method(cContainer, "start", container_start,0);
 }
 
