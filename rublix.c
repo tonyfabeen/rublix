@@ -61,19 +61,31 @@ static VALUE container_is_defined(VALUE self){
 static VALUE container_create(VALUE self){
   struct lxc_container *c;
   Data_Get_Struct(self, struct lxc_container, c);
+  const char *network_type = "veth";
+  const char *network_link = "lxcbr0";
+  const char *network_flags = "up";
 
-  if(!c->set_config_item(c, "lxc.network.type", "veth")){
+  if(!c->set_config_item(c, "lxc.network.type", network_type)){
     fprintf(stderr, "[Rublix] Error on setting network type");
   }
+
+  if(!c->set_config_item(c, "lxc.network.link", network_link)){
+    fprint(stderr, "[Rublix] Error on setting network link");
+  }
+
+  if(!c->set_config_item(c, "lxc.network.flags",network_flags)){
+    fprintf(stderr, "[Rublix] Error on setting network flags");
+  }
+
   rb_iv_set(self, "@network_type", rb_str_new2("veth"));
+  rb_iv_set(self, "@network_link", rb_str_new2("lxcbr0"));
+  rb_iv_set(self, "@network_flags", rb_str_new2("up"));
 
   if(c->createl(c, "ubuntu", NULL, NULL, 0, "-r", "lucid", NULL)){
     return Qtrue;
   }else{
     return Qfalse;
-
   }
-
 }
 
 
