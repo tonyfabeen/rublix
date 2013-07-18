@@ -14,7 +14,7 @@ class RublixTest < Test::Unit::TestCase
   end
 
   def test_new_container
-    container_name = "container_zuum" #"container_#{rand(999)}"
+    container_name = "containerzuum" #"container_#{rand(999)}"
     puts "[Rublix Test] Creating #{container_name }"
 
     container = Rublix::LXC::Container.new(container_name)

@@ -22,10 +22,8 @@ static VALUE container_new(VALUE container_class,
                            VALUE container_name){
   VALUE args[1];
   struct lxc_container *c;
-  //const char *name = RSTRING(container_name);
-  const char *name = "hello";
+  const char *name = StringValuePtr(container_name);
 
-  //c = lxc_container_new((const char *) container_name, NULL);
   c = lxc_container_new(name, NULL);
   if (!c) {
     fprintf(stderr, "Error on create container)");
