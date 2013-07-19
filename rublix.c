@@ -58,12 +58,22 @@ static VALUE container_is_defined(VALUE self){
   }
 }
 
+static VALUE container_is_running(VALUE self) {
+  struct lxc_container *c;
+  Data_Get_Struct(self, struct lxc_container, c);
+
+  if(c->is_running(c)){
+    return Qtrue;
+  }else{
+    return Qfalse;
+  }
+}
 
 static VALUE container_create(VALUE self){
   struct lxc_container *c;
   Data_Get_Struct(self, struct lxc_container, c);
-  const char *network_type = "veth";
-  const char *network_link = "lxcbr0";
+  const char *network_type = "veth"; 
+  const char *network_link = "lxcbr0"; 
   const char *network_flags = "up";
 
   if(!c->set_config_item(c, "lxc.network.type", network_type)){
@@ -120,5 +130,6 @@ void Init_rublix(){
   rb_define_method(cContainer, "is_defined", container_is_defined, 0);
   rb_define_method(cContainer, "create", container_create,0);
   rb_define_method(cContainer, "start", container_start,0);
+  rb_define_method(cContainer, "is_running?", container_is_running,0);
 }
 
