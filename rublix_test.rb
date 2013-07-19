@@ -14,7 +14,8 @@ class RublixTest < Test::Unit::TestCase
   end
 
   def test_new_container
-    container_name = "container#{rand(111)}" #"container_#{rand(999)}"
+
+    container_name = "container#{rand(111)}"
     puts "[Rublix Test] Creating #{container_name }"
 
     container = Rublix::LXC::Container.new(container_name)
@@ -22,10 +23,15 @@ class RublixTest < Test::Unit::TestCase
     assert_equal container.is_running?, false
 
     assert_equal container.create, true
-    assert_equal container.is_defined, true
+    assert_equal container.is_defined?, true
 
     puts "[Rublix Test] Starting #{container_name }"
     assert_equal container.start, true
     assert_equal container.is_running?, true
+
+    puts "[Rublix Test] Stoping #{container_name}"
+    assert_equal container.stop, true
+    assert_equal container.is_running?, false
+
   end
 end

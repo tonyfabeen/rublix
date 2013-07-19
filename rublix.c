@@ -26,7 +26,7 @@ static VALUE container_new(VALUE container_class,
 
   c = lxc_container_new(name, NULL);
   if (!c) {
-    fprintf(stderr, "Error on create container)");
+    fprintf(stderr, "[Rublix C Ext] Error on create container\n)");
   }
 
   VALUE tdata = Data_Wrap_Struct(container_class, 0, free, c);
@@ -72,20 +72,20 @@ static VALUE container_is_running(VALUE self) {
 static VALUE container_create(VALUE self){
   struct lxc_container *c;
   Data_Get_Struct(self, struct lxc_container, c);
-  const char *network_type = "veth"; 
-  const char *network_link = "lxcbr0"; 
+  const char *network_type = "veth";
+  const char *network_link = "lxcbr0";
   const char *network_flags = "up";
 
   if(!c->set_config_item(c, "lxc.network.type", network_type)){
-    fprintf(stderr, "[Rublix] Error on setting network type");
+    fprintf(stderr, "[Rublix C Ext] Error on setting network type\n");
   }
 
   if(!c->set_config_item(c, "lxc.network.link", network_link)){
-    fprint(stderr, "[Rublix] Error on setting network link");
+    fprint(stderr, "[Rublix C] Error on setting network link\n");
   }
 
   if(!c->set_config_item(c, "lxc.network.flags",network_flags)){
-    fprintf(stderr, "[Rublix] Error on setting network flags");
+    fprintf(stderr, "[Rublix C] Error on setting network flags\n");
   }
 
   rb_iv_set(self, "@network_type", rb_str_new2("veth"));
@@ -108,9 +108,23 @@ static VALUE container_start(VALUE self){
   c->want_daemonize(c);
 
   if(c->startl(c,0,NULL)){
+    fprintf(stdout,"[Rublix C] Container Started Successflly!!");
     return Qtrue;
-    fprintf(stderr,"[Rublix] Error on trying to Start Container");
   }else{
+    fprintf(stderr,"[Rublix C] Error on trying to Start Container");
+    return Qfalse;
+  }
+}
+
+static VALUE container_stop(VALUE self){
+  struct lxc_container *c;
+  Data_Get_Struct(self, struct lxc_container, c);
+
+  if(c->stop(c)){
+    fprintf(stdout,"[Rublix C] Container Stopped Successflly!!");
+    return Qtrue;
+  }else{
+    fprintf(stderr,"[Rublix C] Error on trying to Stop Container");
     return Qfalse;
   }
 }
@@ -127,9 +141,11 @@ void Init_rublix(){
   rb_define_singleton_method(cContainer, "new", container_new,1);
   rb_define_method(cContainer, "initialize", container_init, 1);
   rb_define_method(cContainer, "name", container_get_name,0);
-  rb_define_method(cContainer, "is_defined", container_is_defined, 0);
+  rb_define_method(cContainer, "is_defined?", container_is_defined, 0);
+  rb_define_method(cContainer, "is_running?", container_is_running,0);
   rb_define_method(cContainer, "create", container_create,0);
   rb_define_method(cContainer, "start", container_start,0);
-  rb_define_method(cContainer, "is_running?", container_is_running,0);
+  rb_define_method(cContainer, "stop", container_stop,0);
+
 }
 

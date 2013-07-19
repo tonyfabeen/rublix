@@ -6,11 +6,12 @@ LXC bindings in Ruby
 TODO
 ======
 
-* Populate Container Object with : 
-  - Pid 
+* Populate Container Object with :
+  - Pid
 
-* Implement Functions : 
-  - Stop 
+* Implement Functions :
   - Info
-  - Reboot  
+  - Reboot
+
+* Use other Distro templates. Today it supports only Ubuntu Machines.
 
