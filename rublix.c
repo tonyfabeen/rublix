@@ -46,6 +46,14 @@ static VALUE container_get_name(VALUE self){
   return rb_iv_get(self,"@name");
 }
 
+static VALUE container_pid(VALUE self){
+  struct lxc_container *c;
+  Data_Get_Struct(self, struct lxc_container, c);
+  char *pid_str;
+  sprintf(pid_str, "%ld", (long) c->init_pid);
+
+  return rb_str_new2(pid_str);
+}
 
 static VALUE container_is_defined(VALUE self){
   struct lxc_container *c;
@@ -140,6 +148,7 @@ void Init_rublix(){
   cContainer = rb_define_class_under(mLxc, "Container", rb_cObject);
   rb_define_singleton_method(cContainer, "new", container_new,1);
   rb_define_method(cContainer, "initialize", container_init, 1);
+  //rb_define_method(cContainer, "pid", container_pid,0);
   rb_define_method(cContainer, "name", container_get_name,0);
   rb_define_method(cContainer, "is_defined?", container_is_defined, 0);
   rb_define_method(cContainer, "is_running?", container_is_running,0);
