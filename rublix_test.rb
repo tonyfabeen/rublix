@@ -28,10 +28,15 @@ class RublixTest < Test::Unit::TestCase
     puts "[Rublix Test] Starting #{container_name }"
     assert_equal container.start, true
     assert_equal container.is_running?, true
+    assert_equal Dir.exists?("/var/lib/lxc/#{container_name}"), true
 
     puts "[Rublix Test] Stoping #{container_name}"
     assert_equal container.stop, true
     assert_equal container.is_running?, false
 
+    puts "[Rublix Test] Destroying #{container_name}"
+    assert_equal container.destroy, true
+    assert_equal container.is_running?, false
+    assert_equal Dir.exists?("/var/lib/lxc/#{container_name}"), false
   end
 end

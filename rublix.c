@@ -89,11 +89,11 @@ static VALUE container_create(VALUE self){
   }
 
   if(!c->set_config_item(c, "lxc.network.link", network_link)){
-    fprint(stderr, "[Rublix C] Error on setting network link\n");
+    fprint(stderr, "[Rublix C Ext] Error on setting network link\n");
   }
 
   if(!c->set_config_item(c, "lxc.network.flags",network_flags)){
-    fprintf(stderr, "[Rublix C] Error on setting network flags\n");
+    fprintf(stderr, "[Rublix C Ext] Error on setting network flags\n");
   }
 
   rb_iv_set(self, "@network_type", rb_str_new2("veth"));
@@ -116,10 +116,10 @@ static VALUE container_start(VALUE self){
   c->want_daemonize(c);
 
   if(c->startl(c,0,NULL)){
-    fprintf(stdout,"[Rublix C] Container Started Successflly!!");
+    fprintf(stdout,"[Rublix C Ext] Container Started Successflly!!\n");
     return Qtrue;
   }else{
-    fprintf(stderr,"[Rublix C] Error on trying to Start Container");
+    fprintf(stderr,"[Rublix C Ext] Error on trying to Start Container\n");
     return Qfalse;
   }
 }
@@ -129,12 +129,26 @@ static VALUE container_stop(VALUE self){
   Data_Get_Struct(self, struct lxc_container, c);
 
   if(c->stop(c)){
-    fprintf(stdout,"[Rublix C] Container Stopped Successflly!!");
+    fprintf(stdout,"[Rublix C Ext] Container Stopped Successflly!!\n");
     return Qtrue;
   }else{
-    fprintf(stderr,"[Rublix C] Error on trying to Stop Container");
+    fprintf(stderr,"[Rublix C Ext] Error on trying to Stop Container\n");
     return Qfalse;
   }
+}
+
+static VALUE container_destroy(VALUE self) {
+  struct lxc_container *c;
+  Data_Get_Struct(self, struct lxc_container, c);
+
+  if(c->destroy(c)){
+    fprintf(stdout,"[Rublix C Ext] Container Destroyed Successflly!!\n");
+    return Qtrue;
+  }else{
+    fprintf(stderr,"[Rublix C Ext] Error on trying to Destroy Container\n");
+    return Qfalse;
+  }
+
 }
 
 
@@ -155,6 +169,7 @@ void Init_rublix(){
   rb_define_method(cContainer, "create", container_create,0);
   rb_define_method(cContainer, "start", container_start,0);
   rb_define_method(cContainer, "stop", container_stop,0);
+  rb_define_method(cContainer, "destroy", container_destroy,0);
 
 }
 
