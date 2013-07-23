@@ -77,6 +77,7 @@ static VALUE container_is_running(VALUE self) {
   }
 }
 
+
 static VALUE container_create(VALUE self){
   struct lxc_container *c;
   Data_Get_Struct(self, struct lxc_container, c);
@@ -151,6 +152,27 @@ static VALUE container_destroy(VALUE self) {
 
 }
 
+static VALUE container_get_config_item(VALUE self, VALUE config_item_arg) {
+  struct lxc_container *c; 
+  Data_Get_Struct(self, struct lxc_container, c);
+  int item_length;
+  char *item_value;
+  const char *config_item = StringValuePtr(config_item_arg);
+  
+  item_length = c->get_config_item(c, config_item, NULL,0);
+  if(item_length <=0){
+    fprintf(stderr, "[Rublix C Ext] Error on trying to get a config item length: %s .\n", config_item);
+    return Qnil;
+  }
+
+  item_value = alloca(sizeof(char)*item_length+1);
+  if(c->get_config_item(c, config_item, item_value, item_length+1) != item_length){
+    fprintf(stderr, "[Rublix C Ext] Error on trying to get a config item. Maybe it doesn't exist.\n");
+    return Qnil;
+  }
+  return rb_str_new2(item_value);
+}
+
 
 void Init_rublix(){
 
@@ -170,6 +192,7 @@ void Init_rublix(){
   rb_define_method(cContainer, "start", container_start,0);
   rb_define_method(cContainer, "stop", container_stop,0);
   rb_define_method(cContainer, "destroy", container_destroy,0);
+  rb_define_method(cContainer, "get_config_item", container_get_config_item, 1);
 
 }
 

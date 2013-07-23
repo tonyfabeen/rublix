@@ -39,4 +39,16 @@ class RublixTest < Test::Unit::TestCase
     assert_equal container.is_running?, false
     assert_equal Dir.exists?("/var/lib/lxc/#{container_name}"), false
   end
+
+
+  def test_get_config_item
+
+    container_name = "container104" #Use a Container that already exists
+    puts "[Rublix Test] Config For #{container_name}"
+    
+    container = Rublix::LXC::Container.new(container_name)
+    assert_equal container.get_config_item("lxc.utsname"), "container104"
+    assert_equal container.get_config_item("lxc.rootfs"), "/var/lib/lxc/container104/rootfs"
+  end
+
 end
