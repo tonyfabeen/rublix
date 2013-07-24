@@ -46,15 +46,6 @@ static VALUE container_get_name(VALUE self){
   return rb_iv_get(self,"@name");
 }
 
-static VALUE container_pid(VALUE self){
-  struct lxc_container *c;
-  Data_Get_Struct(self, struct lxc_container, c);
-  char *pid_str;
-  sprintf(pid_str, "%ld", (long) c->init_pid);
-
-  return rb_str_new2(pid_str);
-}
-
 static VALUE container_is_defined(VALUE self){
   struct lxc_container *c;
   Data_Get_Struct(self, struct lxc_container, c);
@@ -117,10 +108,10 @@ static VALUE container_start(VALUE self){
   c->want_daemonize(c);
 
   if(c->startl(c,0,NULL)){
-    fprintf(stdout,"[Rublix C Ext] Container Started Successflly!!\n");
+    fprintf(stdout,"[Rublix C Ext] Container : %s Started Successflly!!\n", c->name);
     return Qtrue;
   }else{
-    fprintf(stderr,"[Rublix C Ext] Error on trying to Start Container\n");
+    fprintf(stderr,"[Rublix C Ext] Error on trying to Start Container :  %s \n", c->name);
     return Qfalse;
   }
 }
@@ -130,10 +121,10 @@ static VALUE container_stop(VALUE self){
   Data_Get_Struct(self, struct lxc_container, c);
 
   if(c->stop(c)){
-    fprintf(stdout,"[Rublix C Ext] Container Stopped Successflly!!\n");
+    fprintf(stdout,"[Rublix C Ext] Container %s Stopped Successflly!!\n", c->name);
     return Qtrue;
   }else{
-    fprintf(stderr,"[Rublix C Ext] Error on trying to Stop Container\n");
+    fprintf(stderr,"[Rublix C Ext] Error on trying to Stop Container :  %s \n", c->name);
     return Qfalse;
   }
 }
@@ -143,22 +134,51 @@ static VALUE container_destroy(VALUE self) {
   Data_Get_Struct(self, struct lxc_container, c);
 
   if(c->destroy(c)){
-    fprintf(stdout,"[Rublix C Ext] Container Destroyed Successflly!!\n");
+    fprintf(stdout,"[Rublix C Ext] Container : %s Destroyed Successflly!!\n", c->name);
     return Qtrue;
   }else{
-    fprintf(stderr,"[Rublix C Ext] Error on trying to Destroy Container\n");
+    fprintf(stderr,"[Rublix C Ext] Error on trying to Destroy Container %s \n", c->name);
     return Qfalse;
   }
 
 }
 
+static VALUE container_shutdown(VALUE self){
+  struct lxc_container *c;
+  Data_Get_Struct(self, struct lxc_container, c);
+
+  if(c->shutdown(c,5)){
+    fprintf(stdout, "[Rublix C Ext] Container : %s Shutdown Successfully\n", c->name);
+    return Qtrue;
+  }else{
+    fprintf(stderr, "[Rublix C Ext] Error on trying to Shutdown Container : %s \n", c->name);
+    return Qfalse;
+  }
+
+}
+
+static VALUE container_reboot(VALUE self){
+  struct lxc_container *c;
+  Data_Get_Struct(self, struct lxc_container, c);
+
+  if(c->reboot(c)){
+    fprintf(stdout, "[Rublix C Ext] Container : %s Reboot Successfully\n", c->name);
+    return Qtrue;
+  }else{
+    fprintf(stderr, "[Rublix C Ext] Error on trying to Reboot Container %s Successfully\n", c->name);
+    return Qfalse;
+  }
+
+}
+
+
 static VALUE container_get_config_item(VALUE self, VALUE config_item_arg) {
-  struct lxc_container *c; 
+  struct lxc_container *c;
   Data_Get_Struct(self, struct lxc_container, c);
   int item_length;
   char *item_value;
   const char *config_item = StringValuePtr(config_item_arg);
-  
+
   item_length = c->get_config_item(c, config_item, NULL,0);
   if(item_length <=0){
     fprintf(stderr, "[Rublix C Ext] Error on trying to get a config item length: %s .\n", config_item);
@@ -184,14 +204,15 @@ void Init_rublix(){
   cContainer = rb_define_class_under(mLxc, "Container", rb_cObject);
   rb_define_singleton_method(cContainer, "new", container_new,1);
   rb_define_method(cContainer, "initialize", container_init, 1);
-  //rb_define_method(cContainer, "pid", container_pid,0);
   rb_define_method(cContainer, "name", container_get_name,0);
-  rb_define_method(cContainer, "is_defined?", container_is_defined, 0);
-  rb_define_method(cContainer, "is_running?", container_is_running,0);
+  rb_define_method(cContainer, "defined?", container_is_defined, 0);
+  rb_define_method(cContainer, "running?", container_is_running,0);
   rb_define_method(cContainer, "create", container_create,0);
   rb_define_method(cContainer, "start", container_start,0);
   rb_define_method(cContainer, "stop", container_stop,0);
   rb_define_method(cContainer, "destroy", container_destroy,0);
+  rb_define_method(cContainer, "shutdown", container_shutdown, 0);
+  rb_define_method(cContainer, "reboot", container_reboot, 0);
   rb_define_method(cContainer, "get_config_item", container_get_config_item, 1);
 
 }
