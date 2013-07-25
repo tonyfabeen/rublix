@@ -52,6 +52,16 @@ class RublixTest < Test::Unit::TestCase
     assert_equal container.get_config_item("lxc.rootfs"), "/var/lib/lxc/#{ container_already_created}/rootfs"
   end
 
+  def test_get_cgroup_item
+    puts "[Rublix Test] CGROUP Item For #{container_already_created}"
+
+    container = Rublix::LXC::Container.new(container_already_created)
+    container.start
+
+    puts "[Rublix Test] CGROUP Item 'cpuset.cpus' #{container.get_cgroup_item("cpuset.cpus")}"
+    assert_not_nil container.get_cgroup_item("cpuset.cpus")
+  end
+
   def test_shutdown_container
     puts "[Rublix Test] Shutdown #{container_already_created}"
 

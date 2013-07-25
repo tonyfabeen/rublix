@@ -193,6 +193,19 @@ static VALUE container_get_config_item(VALUE self, VALUE config_item_arg) {
   return rb_str_new2(item_value);
 }
 
+static VALUE container_get_cgroup_item(VALUE self, VALUE cgroup_item_arg){
+  struct lxc_container *c;
+  Data_Get_Struct(self, struct lxc_container, c);
+  char return_value[201];
+  const char *cgroup_item = StringValuePtr(cgroup_item_arg);
+
+  if(c->get_cgroup_item(c, cgroup_item, return_value, 200) <= 0){
+    fprintf(stderr, "[Rublix C Ext] Error on trying to get a CGROUP item : %s .\n", cgroup_item);
+    return Qnil;
+  }else{
+    return rb_str_new2(return_value);
+  }
+}
 
 void Init_rublix(){
 
@@ -214,6 +227,7 @@ void Init_rublix(){
   rb_define_method(cContainer, "shutdown", container_shutdown, 0);
   rb_define_method(cContainer, "reboot", container_reboot, 0);
   rb_define_method(cContainer, "get_config_item", container_get_config_item, 1);
+  rb_define_method(cContainer, "get_cgroup_item", container_get_cgroup_item, 1);
 
 }
 
