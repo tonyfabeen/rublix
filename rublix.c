@@ -207,6 +207,22 @@ static VALUE container_get_cgroup_item(VALUE self, VALUE cgroup_item_arg){
   }
 }
 
+static VALUE container_set_cgroup_item(VALUE self, VALUE cgroup_item_arg, VALUE cgroup_item_value_arg){
+  struct lxc_container *c;
+  Data_Get_Struct(self, struct lxc_container, c);
+  const char *cgroup_item = StringValuePtr(cgroup_item_arg);
+  const char *cgroup_item_value = StringValuePtr(cgroup_item_value_arg);
+
+  if(c->set_cgroup_item(c, cgroup_item, cgroup_item_value)){
+    return Qtrue;
+  }else{
+    fprintf(stderr, "[Rublix C Ext] Error on trying to set a CGROUP item : %s with value : %s.\n", cgroup_item, cgroup_item_value);
+    return Qfalse;
+  }
+
+}
+
+
 void Init_rublix(){
 
   mRublix = rb_define_module("Rublix");
@@ -228,6 +244,7 @@ void Init_rublix(){
   rb_define_method(cContainer, "reboot", container_reboot, 0);
   rb_define_method(cContainer, "get_config_item", container_get_config_item, 1);
   rb_define_method(cContainer, "get_cgroup_item", container_get_cgroup_item, 1);
+  rb_define_method(cContainer, "set_cgroup_item", container_set_cgroup_item, 2);
 
 }
 

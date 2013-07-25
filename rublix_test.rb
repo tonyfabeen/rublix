@@ -7,6 +7,14 @@ class RublixTest < Test::Unit::TestCase
     "container70"
   end
 
+  def create_container
+    container_name = "container#{rand(111)}"
+    container = Rublix::LXC::Container.new(container_name)
+    container.create
+
+    container.name
+   end
+
   def test_lxc_config_path
     lxc_config_path = "/var/lib/lxc"
     assert_equal Rublix::LXC.config_path, lxc_config_path
@@ -53,13 +61,29 @@ class RublixTest < Test::Unit::TestCase
   end
 
   def test_get_cgroup_item
-    puts "[Rublix Test] CGROUP Item For #{container_already_created}"
+    puts "[Rublix Test] Get CGROUP Item For #{container_already_created}"
 
     container = Rublix::LXC::Container.new(container_already_created)
     container.start
 
-    puts "[Rublix Test] CGROUP Item 'cpuset.cpus' #{container.get_cgroup_item("cpuset.cpus")}"
+    puts "[Rublix Test] CGROUP Get Item 'cpuset.cpus' #{container.get_cgroup_item("cpuset.cpus")}"
+    #same as $ cat /sys/fs/cgroup/cpuset/lxc/<container_name>/cpuset.cpus
     assert_not_nil container.get_cgroup_item("cpuset.cpus")
+
+    container.stop
+  end
+
+  def test_set_cgroup_item
+    puts "[Rublix Test] Set CGROUP Item For #{container_already_created}"
+
+    container = Rublix::LXC::Container.new(container_already_created)
+    container.start
+
+    container.set_cgroup_item("cpuset.cpus", "0")
+    #Lxc puts \n in the end :(
+    assert_equal container.get_cgroup_item("cpuset.cpus"), "0\n"
+
+    container.stop
   end
 
   def test_shutdown_container
