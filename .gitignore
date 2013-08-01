@@ -14,6 +14,7 @@ tmp
 Makefile
 *.so
 *.o
+Gemfile.lock
 RUBYARCHDIR.time
 
 # YARD artifacts
