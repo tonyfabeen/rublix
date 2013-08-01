@@ -3,17 +3,15 @@ rublix
 
 LXC bindings in Ruby
 
+## Requirements
+- Ubuntu 11.04 / 11.10 64-bit system
+- Superuser privileges (required in some scripts)
+- Ruby 1.9.x
+
+
 TODO
 ======
 
-* Populate Container Object with :
-  - Pid
-  - Configuration Items, same wich is saved at "/var/lib/lxc/<container_name>/config"
-
-* Implement Functions :
-  - Info
-  - Reboot
-
 * Use other Distro templates. Today it supports only Ubuntu Machines.
-* Today it comes with Set another user/password than what comes with template.
+* Set another user/password than what comes with template.
 
