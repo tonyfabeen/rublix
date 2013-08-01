@@ -9,8 +9,7 @@ LXC bindings in Ruby
 - Ruby 1.9.x
 
 
-TODO
-======
+## TODO
 
 * Use other Distro templates. Today it supports only Ubuntu Machines.
 * Set another user/password than what comes with template.
