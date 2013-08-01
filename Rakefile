@@ -1,40 +1,44 @@
 require 'rake/testtask'
 
+APP_DIR = Dir.pwd
+EXT_DIR = APP_DIR + '/ext/rublix'
+TEST_DIR = APP_DIR + '/test'
+
 def print_message(msg)
   $stdout.puts "[Rublix] #{msg} "
 end
 
 def has_makefile?
-  File.exists?(File.expand_path("./Makefile"))
+  File.exists?("./Makefile")
 end
 
 Rake::TestTask.new do |t|
   t.libs << "."
-  t.test_files = FileList['rublix_test.rb']
+  t.test_files = FileList["#{TEST_DIR}/rublix_test.rb"]
   t.verbose = true
 
 end
 
 task :clean do |t|
   print_message "Cleaning up ..."
-  `make clean && rm Makefile` if has_makefile?
+  system("make clean && rm Makefile") if has_makefile?
 end
 
 task :generate_makefile => [:clean] do |t|
   print_message "Generating Makefile ..."
-  `ruby extconf.rb` unless has_makefile?
+  system("ruby #{EXT_DIR}/extconf.rb") unless has_makefile?
 end
 
 
 task :compile => [:generate_makefile] do |t|
   print_message "Compiling ..."
-  `make`
+  system("make")
 end
 
 task :install => [:compile] do |t|
   print_message "Installing ..."
 
-  `make install`
+  system("cd #{EXT_DIR} && make install")
   Rake::Task["test"].invoke
 
   print_message "All Tests Ok. Enjoy Rublix !!!"
