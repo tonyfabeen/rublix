@@ -1,7 +1,7 @@
 Rublix
 ======
 
-  LXC bindings in Ruby
+LXC Manager in Ruby
 
 ## Requirements
   - Ubuntu 11.04 / 11.10 64-bit system
