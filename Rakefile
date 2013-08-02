@@ -14,7 +14,7 @@ end
 
 Rake::TestTask.new do |t|
   t.libs << "."
-  t.test_files = FileList["#{TEST_DIR}/rublix_test.rb"]
+  t.test_files = FileList["#{TEST_DIR}/rublix_test.rb", "#{TEST_DIR}/api_test.rb"]
   t.verbose = true
 
 end
