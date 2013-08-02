@@ -1,6 +1,11 @@
 source "http://rubygems.org"
+
 gem "sinatra"
 gem "json"
-gem "rack-test", :group => :test
-gem "mocha", :require => false, :group => :test
+
+group :test do
+  gem "rack-test"
+  gem "mocha", :require => false
+  gem "pry"
+end
 
