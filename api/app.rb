@@ -3,7 +3,7 @@ require 'rublix'
 Bundler.require(:default)
 
 
-class Container
+class ContainerService
 
   attr_accessor :errors, :container
 
@@ -37,21 +37,21 @@ class Container
 end
 
 get '/lxc-config-path' do
-  Rublix::LXC.config_path + "\n"
+  Rublix::LXC.config_path
 end
 
 get '/lxc-version' do
-  Rublix::LXC.version + "\n"
+  Rublix::LXC.version
 end
 
 #curl -X POST -H "Content-Type: application/json" -d '{"name":"containerplus"}' http://localhost:6000/containers/create
 post '/containers/create' do
   container_params = JSON.parse(request.body.read)
 
-  container = Container.new(container_params)
-  if container.create
+  container_service = ContainerService.new(container_params)
+  if container_service.create
     status 200
-    container_hash = {:name => container['name']}
+    container_hash = {:name => container_params['name']}
     container_hash.to_json
   else
     status 422
