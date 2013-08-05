@@ -1,0 +1,2 @@
+#!/usr/bin/sh
+rackup -r ./api/app.rb -p 6000
