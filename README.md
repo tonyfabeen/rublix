@@ -1,7 +1,7 @@
 Rublix
 ======
 
-LXC Manager in Ruby
+LXC Management Tool in Ruby
 
 ## Requirements
   - Ubuntu 11.04 / 11.10 64-bit system
@@ -9,6 +9,13 @@ LXC Manager in Ruby
   - Ruby 1.9.x
   - Ubuntu Packages : lxc, lxc-dev >= 0.9.0
   - RubyGems : Bundler, Sinatra
+
+## Testing and Running
+
+ ```sh
+   $ sudo rake install
+   $ sudo ./bin/rublix &
+ ```
 
 ## TODO
 
