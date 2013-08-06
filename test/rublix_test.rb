@@ -3,16 +3,11 @@ require 'test/unit'
 
 class RublixTest < Test::Unit::TestCase
 
-  def container_already_created
-    "container70"
-  end
-
   def create_container
     container_name = "container#{rand(111)}"
     container = Rublix::LXC::Container.new(container_name)
     container.create
-
-    container.name
+    container
    end
 
   def test_lxc_config_path
@@ -31,7 +26,7 @@ class RublixTest < Test::Unit::TestCase
 
     container = Rublix::LXC::Container.new(container_name)
     assert_equal container.name, container_name
-    assert_equal container.running?, false
+      assert_equal container.running?, false
 
     assert_equal container.create, true
     assert_equal container.defined?, true
@@ -53,17 +48,18 @@ class RublixTest < Test::Unit::TestCase
 
 
   def test_get_config_item
-    puts "[Rublix Test] Config For #{container_already_created}"
+    container = create_container
+    puts "[Rublix Test] Config For #{container.name}"
 
-    container = Rublix::LXC::Container.new(container_already_created)
-    assert_equal container.get_config_item("lxc.utsname"), container_already_created
-    assert_equal container.get_config_item("lxc.rootfs"), "/var/lib/lxc/#{ container_already_created}/rootfs"
+    assert_equal container.get_config_item("lxc.utsname"), container.name
+    assert_equal container.get_config_item("lxc.rootfs"), "/var/lib/lxc/#{ container.name}/rootfs"
+
+    container.destroy
   end
 
   def test_get_cgroup_item
-    puts "[Rublix Test] Get CGROUP Item For #{container_already_created}"
-
-    container = Rublix::LXC::Container.new(container_already_created)
+    container = create_container
+    puts "[Rublix Test] Get CGROUP Item For #{container.name}"
     container.start
 
     puts "[Rublix Test] CGROUP Get Item 'cpuset.cpus' #{container.get_cgroup_item("cpuset.cpus")}"
@@ -71,12 +67,12 @@ class RublixTest < Test::Unit::TestCase
     assert_not_nil container.get_cgroup_item("cpuset.cpus")
 
     container.stop
+    container.destroy
   end
 
   def test_set_cgroup_item
-    puts "[Rublix Test] Set CGROUP Item For #{container_already_created}"
-
-    container = Rublix::LXC::Container.new(container_already_created)
+    container = create_container
+    puts "[Rublix Test] Set CGROUP Item For #{container.name}"
     container.start
 
     container.set_cgroup_item("cpuset.cpus", "0")
@@ -84,28 +80,32 @@ class RublixTest < Test::Unit::TestCase
     assert_equal container.get_cgroup_item("cpuset.cpus"), "0\n"
 
     container.stop
+    container.destroy
   end
 
   def test_shutdown_container
-    puts "[Rublix Test] Shutdown #{container_already_created}"
-
-    container = Rublix::LXC::Container.new(container_already_created)
+    container = create_container
+    puts "[Rublix Test] Shutdown #{container.name}"
     container.start
-    assert_equal container.running?, true
 
+    assert_equal container.running?, true
     assert_equal container.shutdown, true
     assert_equal container.running?, false
+
+    container.destroy
 
   end
 
   def test_reboot_container
-    puts "[Rublix Test] Reboot #{container_already_created}"
-
-    container = Rublix::LXC::Container.new(container_already_created)
+    container = create_container
+    puts "[Rublix Test] Reboot #{container.name}"
     container.start
+
     assert_equal container.running?, true
     assert_equal container.reboot, true
 
+    container.stop
+    container.destroy
   end
 
 end
