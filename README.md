@@ -12,7 +12,12 @@ LXC Management Tool in Ruby
 
 ## Testing and Running
 
+ I suppose you are using a new machine.
+
  ```sh
+   $ chmod +x ./scripts/prepare_environment
+   $ sudo ./scripts/prepare_environment
+   $ bundle install
    $ sudo rake install
    $ sudo ./bin/rublix &
  ```
