@@ -1,0 +1,10 @@
+apt-get update -y
+apt-get remove -y ruby1.8
+apt-get autoremove
+apt-get install -y git-core ruby1.9.3
+apt-get install -y python-software-properties
+apt-add-repository ppa:ubuntu-lxc/daily
+apt-get update -y
+apt-get install -y lxc lxc-dev
+gem install bundler sinatra rake --no-ri --no-rdoc
+
