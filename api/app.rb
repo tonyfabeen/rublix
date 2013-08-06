@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'bundler/setup'
 require 'rublix'
 require File.expand_path('./api/container_service')
@@ -30,7 +31,7 @@ post '/containers/create' do
 
 end
 
-#
+#curl -X POST http://localhost:6000/containers/containerplus/start
 post '/containers/:name/start' do
 
   container_service = ContainerService.new(params)
