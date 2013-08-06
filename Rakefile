@@ -38,7 +38,7 @@ end
 task :install => [:compile] do |t|
   print_message "Installing ..."
 
-  system("cd #{EXT_DIR} && make install")
+  system("make install")
   Rake::Task["test"].invoke
 
   print_message "All Tests Ok. Enjoy Rublix !!!"
